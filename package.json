@@ -15,5 +15,11 @@
   "bugs": {
     "url": "https://github.com/kjetilhoiby/incubator/issues"
   },
-  "homepage": "https://github.com/kjetilhoiby/incubator#readme"
+  "homepage": "https://github.com/kjetilhoiby/incubator#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "sqlite3": "^5.0.0",
+    "tplink-smarthome-api": "^3.1.0",
+    "util": "^0.12.3"
+  }
 }
