@@ -39,7 +39,7 @@ app.get('/status', (req, res) => {
     res.json(status);
 });
 
-server.listen('3300');
+server.listen('3000');
 
 const logEvent = function logEvent(eventName, device, state) {
     const stateString = state != null ? util.inspect(state) : '';
