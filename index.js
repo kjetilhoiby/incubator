@@ -29,6 +29,7 @@ db.close();
 
 const status = {
     startTime: new Date(),
+    runTime: 0,
     devices: {},
     sessions: [],
     activeSessions: [],
@@ -36,6 +37,7 @@ const status = {
 };
 
 app.get('/status', (req, res) => {
+    status.runTime = Math.round((new Date().getTime() - new Date(status.startTime).getTime()) / 1000);
     res.json(status);
 });
 
