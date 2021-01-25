@@ -4,9 +4,11 @@ const client = new Client();
 const express = require('express');
 const { createdb } = require('./src/js/dbschema/strings');
 const app = express();
+const cors = require('cors');
 const http = require('http');
 const server = http.createServer(app);
 
+app.use(cors());
 
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('test.db');
