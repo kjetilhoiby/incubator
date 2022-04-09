@@ -251,11 +251,5 @@ const message = async (msg) => {
       console.log('response received', statusCode)
       console.log('headers', headers)
       console.log('data', await body.text())
-      
-
-
-    
-    
+          
 }
-
-message('Hello again!');
