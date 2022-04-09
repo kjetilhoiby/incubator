@@ -6,7 +6,17 @@ const { createdb } = require('./src/js/dbschema/strings');
 const app = express();
 const cors = require('cors');
 const http = require('http');
+const { readFileSync } = require('fs');
+const path = require('path');
 const server = http.createServer(app);
+const { request } =  require('undici');
+
+const config = JSON.parse(
+    readFileSync(
+        path.resolve('secrets.json'),
+        {encoding: 'utf-8'}
+    )
+);
 
 app.use(cors());
 
@@ -18,7 +28,7 @@ db.serialize(function () {
 
     var stmt = db.prepare("INSERT INTO val VALUES (?)");
     for (var i = 0; i < 10; i++) {
-        stmt.run("Ipsum " + i);
+       // stmt.run("Ipsum " + i);
     }
     stmt.finalize();
 
@@ -63,8 +73,6 @@ client.on('device-new', (device) => {
     // Device (Common) Events
     device.on('emeter-realtime-update', (emeterRealtime) => {
         // logEvent('emeter-realtime-update', device, emeterRealtime);
-
-
         updateEmeterStatus(device, emeterRealtime);
 
     });
@@ -137,6 +145,9 @@ function updateEmeterStatus(device, emeterRealtime) {
             && (oldStatus.milliwatts < deviceSettings[device.alias].milliwattThreshold || oldStatus.milliwatts == undefined)
         ) {
             console.log('start!', device.alias);
+
+            message(device.alias + ' har startet')
+            
             newStatus.session = {
                 startTime: new Date(),
                 min: 10000,
@@ -150,6 +161,9 @@ function updateEmeterStatus(device, emeterRealtime) {
             && oldStatus.milliwatts > deviceSettings[device.alias].milliwattThreshold
         ) {
             console.log('end!', device.alias);
+
+            message(device.alias + ' er ferdig')
+
             oldStatus.session.endTime = new Date();
             oldStatus.session.duration = Math.round((oldStatus.session.endTime.getTime() - oldStatus.session.startTime.getTime()) / 1000);
             oldStatus.session.device = device.alias;
@@ -182,8 +196,9 @@ function updateEmeterStatus(device, emeterRealtime) {
                 newStatus.session.min = emeterRealtime.power_mw;
             }
 
-        } else {// no session 
-            console.log('no session!', device.alias);
+        } else {
+            // no session 
+            // console.log('no session!', device.alias);
 
         }
         status.devices[device.alias] = newStatus;
@@ -200,16 +215,47 @@ function updateEmeterStatus(device, emeterRealtime) {
                 average: 0
             },
         }
-
         status.devices[device.alias] = newDevice;
-
     }
 }
 
 const deviceSettings = {
     'Tørketrommel': {
         milliwattThreshold: 4500
-    }, 'Vaskemaskin': {
+    }, 
+    'Vaskemaskin': {
         milliwattThreshold: 4500
     }
 }
+
+
+
+const message = async (msg) => {
+
+    const {slack} = config
+
+    const options = {
+        method: 'POST',
+        headers: {
+            "Content-type": "application/json"
+        },
+        body: JSON.stringify({"text": msg})
+    };
+
+    const {
+        statusCode,
+        headers,
+        body
+      } = await request(slack, options)
+      
+      console.log('response received', statusCode)
+      console.log('headers', headers)
+      console.log('data', await body.text())
+      
+
+
+    
+    
+}
+
+message('Hello again!');
