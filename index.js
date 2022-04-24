@@ -193,7 +193,7 @@ async function updateEmeterStatus(device, emeterRealtime) {
 
 const notifyServer = async (device, emeterRealtime) => {
 
-    request('https://node.hoi.by/incubator/', {
+    request('https://node.hoi.by/incubator/register', {
         method: 'POST',
         headers: {'Content-type': 'application/json'},
         body: JSON.stringify({
